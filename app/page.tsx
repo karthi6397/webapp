@@ -24,7 +24,7 @@ export default function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
-            <CardTitle>Code Comparison</CardTitle>
+            <CardTitle> Comparison</CardTitle>
             <CardDescription>Compare code snippets side by side.</CardDescription>
           </CardHeader>
           

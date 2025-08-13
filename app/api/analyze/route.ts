@@ -35,7 +35,8 @@ For each question, return a JSON array with:
 Respond in JSON array format only.
 `;
 
-    const userPrompt = questions.map((q, i) => `${i + 1}. ${q}`).join("\n");
+    const userPrompt = (questions as string[]).map((q: string, i: number) => `${i + 1}. ${q}`).join("\n");
+
 
     const completion = await openai.chat.completions.create({
       model: "mistralai/mistral-7b-instruct",

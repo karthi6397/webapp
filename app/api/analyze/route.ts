@@ -14,9 +14,10 @@ export async function POST(req: Request) {
     const sanitize = (txt: string) =>
       txt.replace(/•/g, "-").replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
 
-    const questions = set1
+    // Ensure `questions` is explicitly typed as string[]
+    const questions: string[] = set1
       .split(/\n\s*\n/)
-      .map(sanitize)
+      .map((q: string) => sanitize(q))
       .filter((q: string) => q.trim().length > 0);
 
     const systemPrompt = `
@@ -35,8 +36,10 @@ For each question, return a JSON array with:
 Respond in JSON array format only.
 `;
 
-    const userPrompt = (questions as string[]).map((q: string, i: number) => `${i + 1}. ${q}`).join("\n");
-
+    // Explicit parameter typing in `.map`
+    const userPrompt = questions
+      .map((q: string, i: number) => `${i + 1}. ${q}`)
+      .join("\n");
 
     const completion = await openai.chat.completions.create({
       model: "mistralai/mistral-7b-instruct",
@@ -47,28 +50,32 @@ Respond in JSON array format only.
       max_tokens: 2000,
     });
 
-    let raw = completion.choices[0].message.content || "[]";
+    let raw = completion.choices[0]?.message?.content || "[]";
     if (!raw.trim().startsWith("[")) raw = raw.slice(raw.indexOf("["));
     if (!raw.trim().endsWith("]")) raw += "]";
 
-    let evaluations = [];
+    let evaluations: any[] = [];
     try {
       evaluations = JSON.parse(raw);
     } catch (err) {
       console.error("🔴 JSON parse failed:", raw);
-      return NextResponse.json({ error: "AI response could not be parsed." }, { status: 500 });
+      return NextResponse.json(
+        { error: "AI response could not be parsed." },
+        { status: 500 }
+      );
     }
 
-    const avg = (val: number) => evaluations.length ? Math.round(val / evaluations.length) : 0;
+    const avg = (val: number) =>
+      evaluations.length ? Math.round(val / evaluations.length) : 0;
 
     let totalScore = 0;
     const metricTotals = { spelling: 0, grammar: 0, clarity: 0 };
 
     evaluations.forEach((q: any) => {
-      totalScore += q.overallScore;
-      metricTotals.spelling += q.spellingScore;
-      metricTotals.grammar += q.grammarScore;
-      metricTotals.clarity += q.clarityScore;
+      totalScore += q.overallScore || 0;
+      metricTotals.spelling += q.spellingScore || 0;
+      metricTotals.grammar += q.grammarScore || 0;
+      metricTotals.clarity += q.clarityScore || 0;
     });
 
     const metrics = [
@@ -91,6 +98,9 @@ Respond in JSON array format only.
 
   } catch (err) {
     console.error("❌ Server Error:", err);
-    return NextResponse.json({ error: "Evaluation failed." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Evaluation failed." },
+      { status: 500 }
+    );
   }
 }

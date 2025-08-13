@@ -1,113 +1,119 @@
 "use client";
 
-import { useState } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { toast } from "sonner";
+import Link from "next/link";
+import {
+  BadgeCheck,
+  Brain,
+  FileText,
+  ShieldCheck,
+  Users,
+  Building2,
+  TrendingUp,
+  ClipboardList,
+  CheckCircle
+} from "lucide-react";
 
-export default function Home() {
-  const [coText, setCoText] = useState("");
-  const [syllabusText, setSyllabusText] = useState("");
-  const [questionsText, setQuestionsText] = useState("");
-  const [result, setResult] = useState<any>(null);
-
-  const handleAnalyze = async () => {
-    if (!coText || !syllabusText || !questionsText) {
-      toast.error("Please fill all required fields.");
-      return;
-    }
-
-    toast.loading("Analyzing...");
-
-    try {
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          outcomes: coText,
-          syllabus: syllabusText,
-          set1: questionsText,
-        }),
-      });
-
-      const data = await res.json();
-      toast.dismiss();
-
-      if (res.ok) {
-        setResult(data);
-        toast.success("Analysis complete!");
-      } else {
-        toast.error(data.error || "Error in response");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.dismiss();
-      toast.error("Something went wrong");
-    }
-  };
-
+export default function HomePage() {
   return (
-    <div className="p-6 max-w-4xl mx-auto flex flex-col gap-6">
-      <h1 className="text-3xl font-bold text-center">Question Paper Evaluator</h1>
+    <div className="min-h-screen bg-[#4A4A2F] flex items-center justify-center p-6">
+      <div className="max-w-5xl w-full bg-white shadow-md rounded-xl p-8 space-y-6">
+        {/* Header */}
+        <div className="flex items-center space-x-3">
+          <Building2 className="text-[#2F2F1A]" />
+          <h1 className="text-3xl md:text-4xl font-bold text-[#2F2F1A]">
+            Welcome to SRMAP AI Admin Suite
+          </h1>
+        </div>
+        <p className="text-lg text-[#3B3B1F]">
+          Streamlining University Administration with Intelligence and Simplicity
+        </p>
 
-      <Card>
-        <CardContent className="p-6 flex flex-col gap-4">
-          <div>
-            <Label>Course Outcomes *</Label>
-            <Textarea
-              placeholder="Enter COs..."
-              value={coText}
-              onChange={(e) => setCoText(e.target.value)}
-            />
+        {/* Description */}
+        <p className="text-[#44432D] text-base leading-relaxed">
+          SRMAP AI Admin Suite is your all-in-one intelligent assistant, built to simplify and optimize the core administrative functions across departments. Whether you're managing academic operations, evaluating question papers, generating reports, or overseeing student data, our platform provides smart, fast, and secure solutions — all in one place.
+        </p>
+
+        {/* Features */}
+        <div>
+          <div className="flex items-center space-x-2 mb-4">
+            <Brain className="text-[#2F2F1A]" />
+            <h2 className="text-2xl font-semibold text-[#2F2F1A]">Key Features</h2>
           </div>
-
-          <div>
-            <Label>Syllabus *</Label>
-            <Textarea
-              placeholder="Enter syllabus..."
-              value={syllabusText}
-              onChange={(e) => setSyllabusText(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <Label>Question Paper Set 1 *</Label>
-            <Textarea
-              placeholder="Paste questions..."
-              value={questionsText}
-              onChange={(e) => setQuestionsText(e.target.value)}
-            />
-          </div>
-
-          <Button className="w-full mt-4" onClick={handleAnalyze}>
-            Analyze
-          </Button>
-        </CardContent>
-      </Card>
-
-      {result && (
-        <div className="bg-white border p-4 rounded shadow mt-6">
-          <h2 className="text-xl font-semibold mb-4">✅ Evaluation Result</h2>
-          <p><strong>Overall Score:</strong> {result.score} / 100</p>
-          <ul className="mt-2 space-y-1">
-            {Object.entries(result.checklist).map(([key, value]) => (
-              <li key={key}>
-                {value === true ? "✅" : value === false ? "❌" : "🔸"}{" "}
-                <strong>{key.replace(/_/g, " ")}:</strong> {value.toString()}
-              </li>
-            ))}
-          </ul>
-
-          <h3 className="mt-4 font-semibold">💡 Suggestions:</h3>
-          <ul className="list-disc list-inside">
-            {result.suggestions.map((s: string, idx: number) => (
-              <li key={idx}>{s}</li>
-            ))}
+          <ul className="space-y-4 text-[#3B3B1F]">
+            <li className="flex items-start space-x-2">
+              <FileText className="mt-1 w-5 h-5" />
+              <span>
+                <strong>AI-Powered Question Paper Evaluation:</strong> Instantly analyze, score, and compare question papers based on Bloom’s Taxonomy, grammar quality, course outcomes, and difficulty level.
+              </span>
+            </li>
+            <li className="flex items-start space-x-2">
+              <ShieldCheck className="mt-1 w-5 h-5" />
+              <span>
+                <strong>Smart Role-Based Access:</strong> Assign viewer, editor, or admin roles to ensure secure and organized collaboration across faculty and departments.
+              </span>
+            </li>
+            <li className="flex items-start space-x-2">
+              <ClipboardList className="mt-1 w-5 h-5" />
+              <span>
+                <strong>Seamless Report Generation:</strong> Automatically generate evaluation reports, performance insights, and content alignment summaries with just a few clicks.
+              </span>
+            </li>
+            <li className="flex items-start space-x-2">
+              <TrendingUp className="mt-1 w-5 h-5" />
+              <span>
+                <strong>Data-Driven Decision Support:</strong> Get actionable insights from academic data to support continuous improvement in curriculum delivery and assessment quality.
+              </span>
+            </li>
           </ul>
         </div>
-      )}
+
+        {/* Benefits */}
+        <div>
+          <div className="flex items-center space-x-2 mb-4">
+            <BadgeCheck className="text-[#2F2F1A]" />
+            <h2 className="text-2xl font-semibold text-[#2F2F1A]">Why Choose Our Platform?</h2>
+          </div>
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[#3B3B1F]">
+            <li className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-[#C68A2F]" />
+              <span>Saves Time & Manual Effort</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-[#C68A2F]" />
+              <span>Increases Accuracy in Evaluations</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-[#C68A2F]" />
+              <span>Enables Transparent Review Process</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-[#C68A2F]" />
+              <span>Designed Specifically for SRMAP's Needs</span>
+            </li>
+          </ul>
+
+        </div>
+
+        {/* User Roles */}
+        <div className="text-center text-[#44432D] text-sm pt-4 border-t border-gray-200">
+          👩‍🏫 <strong>For Faculty</strong> | 👨‍🎓 <strong>For Students</strong> | 🏢 <strong>For Admins</strong>
+          <br />
+          <span className="block mt-1">
+            Let AI handle the complexity — so you can focus on what matters most:{" "}
+            <strong>education, excellence, and empowerment.</strong>
+          </span>
+        </div>
+
+        {/* CTA Button */}
+        <div className="text-center pt-4">
+          <Link
+            href="/analysis"
+            className="inline-block bg-[#C68A2F] hover:bg-[#a77322] text-white font-semibold px-6 py-2 rounded transition"
+          >
+            Start Evaluating
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

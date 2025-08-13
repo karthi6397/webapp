@@ -18,8 +18,8 @@ const DonutChart = ({ score }: { score: number }) => {
     score >= 85
       ? "Excellent question paper!"
       : score >= 70
-        ? "Good question paper with some areas for improvement."
-        : "Needs refinement in structure or clarity.";
+      ? "Good question paper with some areas for improvement."
+      : "Needs refinement in structure or clarity.";
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
@@ -54,8 +54,6 @@ export default function AnalysisPage() {
   const [coText, setCoText] = useState("");
   const [syllabusText, setSyllabusText] = useState("");
   const [questionsText, setQuestionsText] = useState("");
-  const [hasSet2, setHasSet2] = useState(false);
-  const [questionsText2, setQuestionsText2] = useState("");
   const [result, setResult] = useState<any>(null);
 
   const handleAnalyze = async () => {
@@ -73,7 +71,6 @@ export default function AnalysisPage() {
           outcomes: coText,
           syllabus: syllabusText,
           set1: questionsText,
-          ...(hasSet2 && questionsText2.trim() !== "" && { set2: questionsText2 }),
         }),
       });
 
@@ -107,6 +104,7 @@ export default function AnalysisPage() {
     <div className="p-6 max-w-4xl mx-auto flex flex-col gap-6">
       <h1 className="text-3xl font-bold text-center">🧠 Question Paper Evaluator</h1>
 
+      {/* Input Form */}
       <Card>
         <CardContent className="p-6 flex flex-col gap-4">
           <div>
@@ -118,7 +116,6 @@ export default function AnalysisPage() {
               className="h-20"
             />
           </div>
-
           <div>
             <Label>Syllabus *</Label>
             <Textarea
@@ -128,7 +125,6 @@ export default function AnalysisPage() {
               className="h-20"
             />
           </div>
-
           <div>
             <Label>Question Paper Set 1 *</Label>
             <Textarea
@@ -138,40 +134,13 @@ export default function AnalysisPage() {
               className="h-40"
             />
           </div>
-
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id="set2Checkbox"
-              checked={hasSet2}
-              onChange={() => setHasSet2(!hasSet2)}
-              className="accent-blue-600 w-4 h-4"
-            />
-            <Label htmlFor="set2Checkbox">Add Question Paper Set 2</Label>
-          </div>
-
-          {hasSet2 && (
-            <div>
-              <Label>Question Paper Set 2</Label>
-              <Textarea
-                placeholder="Paste second question set..."
-                value={questionsText2}
-                onChange={(e) => setQuestionsText2(e.target.value)}
-                className="h-40"
-              />
-            </div>
-          )}
-
           <Button className="w-full mt-4" onClick={handleAnalyze}>
             Analyze
-          </Button>
-
-          <Button variant="secondary" className="w-full mt-2" onClick={() => window.location.href = "/compare"}>
-            Compare
           </Button>
         </CardContent>
       </Card>
 
+      {/* Error Viewer */}
       {result?.error && (
         <div className="bg-red-100 border border-red-300 p-4 mt-6 rounded text-sm">
           <strong className="text-red-700">⚠️ Error:</strong> {result.error}
@@ -181,6 +150,7 @@ export default function AnalysisPage() {
         </div>
       )}
 
+      {/* Analysis Result */}
       {result?.evaluations && (
         <div className="bg-white border p-6 rounded shadow mt-6">
           <h2 className="text-2xl font-semibold mb-2">📊 Evaluation Summary</h2>
